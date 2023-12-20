@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../Redux/registerSlice";
 
 export const Register = (props) => {
     const [email, setEmail] = useState("");
@@ -7,30 +9,14 @@ export const Register = (props) => {
     const [username, setUsername] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-  
+    const dispatch = useDispatch();
+    const success = useSelector((state) => state.registration.successMessage)
+    const error = useSelector((state) => state.registration.errorMessage)
+
     const handleSubmit = async (e) => {
       e.preventDefault();
-  
-      try {
-        const response = await axios.post("http://localhost:8085/user/signup", {
-          email,
-          password,
-          username,
-        });
-
-        console.log("Registration successful", response.data);
-        setSuccessMessage("Registration successful! You can now login.");
-        setEmail("");
-        setPassword("");
-        setUsername("");
-
-      } catch (error) {
-        console.error("Registration failed", error);
-        setErrorMessage("Registration failed. Please try again.");
-        setEmail("");
-        setPassword("");
-        setUsername("");
-      }
+      console.log(email,password,username)
+      dispatch(registerUser({ email, password, username }))
     };
   
     return (
@@ -68,10 +54,10 @@ export const Register = (props) => {
           />
           <button type="submit" className=" RegisterButton">Register</button>
         </form>
-        {successMessage && (
-          <p className="success-message">{successMessage}</p>
+        {success && (
+          <p className="success-message">{success}</p>
         )}
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {error && <p className="error-message">{error}</p>}
         <button
           className="link-btn"
           onClick={() => props.onFormSwitch("login")}
